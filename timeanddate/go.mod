@@ -1,14 +1,6 @@
-module example.com/client
+module example.com/timeanddate
 
 go 1.19
-
-replace example.com/wunder => ../wunder
-
-replace example.com/calculate => ../calculate
-
-require example.com/wunder v0.0.0-00010101000000-000000000000 // indirect
-
-require example.com/calculate v0.0.0-00010101000000-000000000000 // inderect
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.0 // indirect

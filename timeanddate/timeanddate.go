@@ -1,44 +1,45 @@
-package wunder
+package timeanddate
 
 import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/gocolly/colly"
 )
 
-var url = "https://www.wunderground.com/hourly/il/"
+var url = "https://www.timeanddate.com/weather/israel/"
 
 func initColly() *colly.Collector {
 
 	c := colly.NewCollector(
-		colly.AllowedDomains("www.wunderground.com", "wunderground.com"),
+		colly.AllowedDomains("www.timeanddate.com", "timeanddate.com"),
 	)
 
 	return c
 }
 
 func GetTemp(city string) int {
-	log.Print("wunderground - getTemp")
+	log.SetPrefix("timeanddate: ")
+	log.SetFlags(0)
+	log.Print("getTemp")
 
 	c := initColly()
 
 	var temp string
-	c.OnHTML(".station-nav .wu-value.wu-value-to", func(e *colly.HTMLElement) {
-		temp = e.Text
+	c.OnHTML("#wt-ext tbody tr:first-child td:nth-child(5) ", func(e *colly.HTMLElement) {
+		temp = strings.Fields(e.Text)[0]
 	})
 
-	c.Visit(url + city)
+	c.Visit(url + city + "/ext")
 
-	// fahrenheit to celsius
 	tempInt, err := strconv.Atoi(temp)
-
 	if err != nil {
 		fmt.Println("Error during conversion")
 	}
 
-	return (tempInt - 32) * 5 / 9
+	return tempInt
 }
 
 // func Scrape() string {
