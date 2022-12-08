@@ -1,4 +1,4 @@
-package main
+package wunder
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/gocolly/colly"
 )
 
-func main() {
+func Scrape() string {
 	fmt.Println("Hello, World!")
 
 	c := colly.NewCollector(
@@ -29,6 +29,7 @@ func main() {
 		fmt.Println("\n------------")
 	})
 
+	var temperature string
 	// Find  now temperature
 	c.OnHTML(".station-nav .wu-value.wu-value-to", func(e *colly.HTMLElement) {
 		temperature := e.Text
@@ -36,4 +37,6 @@ func main() {
 	})
 
 	c.Visit("https://www.wunderground.com/hourly/il/hadera")
+
+	return temperature
 }
