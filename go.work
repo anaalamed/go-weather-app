@@ -1,7 +1,9 @@
 go 1.19
 
 use (
+	./atlas
 	./calculate
 	./client
+	./timeanddate
 	./wunder
 )

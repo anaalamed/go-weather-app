@@ -11,6 +11,7 @@ require example.com/wunder v0.0.0-00010101000000-000000000000 // indirect
 require example.com/calculate v0.0.0-00010101000000-000000000000 // inderect
 
 require (
+	example.com/atlas v0.0.0-00010101000000-000000000000 // indirect
 	github.com/PuerkitoBio/goquery v1.8.0 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/antchfx/htmlquery v1.2.5 // indirect
@@ -27,3 +28,5 @@ require (
 	golang.org/x/text v0.5.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 )
+
+replace example.com/atlas => ../atlas
