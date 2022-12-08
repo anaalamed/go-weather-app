@@ -2,12 +2,15 @@ package wunder
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/gocolly/colly"
 )
 
+var url = "https://www.wunderground.com/hourly/il/"
+
 func Scrape() string {
-	fmt.Println("Hello, World!")
+	fmt.Println("wunder")
 
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.wunderground.com", "wunderground.com"),
@@ -29,14 +32,48 @@ func Scrape() string {
 		fmt.Println("\n------------")
 	})
 
-	var temperature string
-	// Find  now temperature
+	// Find now temperature
+	var temperature = "1"
 	c.OnHTML(".station-nav .wu-value.wu-value-to", func(e *colly.HTMLElement) {
 		temperature := e.Text
 		fmt.Println(temperature)
 	})
 
+	fmt.Println("after", temperature)
+
 	c.Visit("https://www.wunderground.com/hourly/il/hadera")
 
+	fmt.Println("end ", temperature)
 	return temperature
+}
+
+func initColly() *colly.Collector {
+	fmt.Println("initColly")
+
+	c := colly.NewCollector(
+		colly.AllowedDomains("www.wunderground.com", "wunderground.com"),
+	)
+
+	return c
+}
+
+func GetTemp(city string) int {
+	fmt.Println("getTemp")
+	c := initColly()
+
+	var temp string
+	c.OnHTML(".station-nav .wu-value.wu-value-to", func(e *colly.HTMLElement) {
+		temp = e.Text
+	})
+
+	c.Visit(url + city)
+
+	// fahrenheit to celsius
+	tempInt, err := strconv.Atoi(temp)
+
+	if err != nil {
+		fmt.Println("Error during conversion")
+	}
+
+	return (tempInt - 32) * 5 / 9
 }

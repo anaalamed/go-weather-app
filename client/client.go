@@ -8,7 +8,8 @@ import (
 
 func main() {
 	fmt.Println("Hello, World from client!")
+	var city = "hadera"
 
-	message := wunder.Scrape()
-	fmt.Println(message)
+	temp := wunder.GetTemp(city)
+	fmt.Printf("By wunder temperature now at %s is: %d\n", city, temp)
 }
