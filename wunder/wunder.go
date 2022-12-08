@@ -2,6 +2,7 @@ package wunder
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/gocolly/colly"
@@ -48,7 +49,6 @@ func Scrape() string {
 }
 
 func initColly() *colly.Collector {
-	fmt.Println("initColly")
 
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.wunderground.com", "wunderground.com"),
@@ -58,7 +58,8 @@ func initColly() *colly.Collector {
 }
 
 func GetTemp(city string) int {
-	fmt.Println("getTemp")
+	log.Print("getTemp")
+
 	c := initColly()
 
 	var temp string
