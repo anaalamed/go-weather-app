@@ -5,6 +5,7 @@ import (
 
 	"example.com/atlas"
 	"example.com/timeanddate"
+	"example.com/utils"
 	"example.com/wunder"
 )
 
@@ -19,7 +20,7 @@ func CalcTempToday(city string) float32 {
 	fmt.Printf("By weather-atlas temperature now at %s is: %d\n", city, tempAtlas)
 
 	tempArr := []int{tempAtlas, tempTimeAmdDate, tempWunder}
-	return getAverageArrayInt(tempArr)
+	return utils.GetAverageArrayInt(tempArr)
 }
 
 func CalcAverageTemp(city string, days int) float32 {
@@ -31,7 +32,7 @@ func CalcAverageTemp(city string, days int) float32 {
 	fmt.Printf("By weather-atlas temperature for %d days at %s is: %.2f\n", days, city, tempAtlas)
 
 	tempArr := []float32{tempAtlas, tempTimeAmdDate}
-	return getAverageArrayFloat(tempArr)
+	return utils.GetAverageArrayFloat(tempArr)
 }
 
 func GetTempMinMax(city string, days int) (float32, float32) {
@@ -44,27 +45,5 @@ func GetTempMinMax(city string, days int) (float32, float32) {
 
 	minArr := []int{tempAtlasMin, tempTimeAmdDateMin}
 	maxArr := []int{tempAtlasMax, tempTimeAmdDateMax}
-	return getAverageArrayInt(minArr), getAverageArrayInt(maxArr)
-}
-
-func getAverageArrayInt(array []int) float32 {
-	n := len(array)
-	sum := 0
-
-	for i := 0; i < n; i++ {
-		sum += (array[i])
-	}
-
-	return (float32(sum) / float32(n))
-}
-
-func getAverageArrayFloat(array []float32) float32 {
-	n := len(array)
-	var sum float32 = 0
-
-	for i := 0; i < n; i++ {
-		sum += (array[i])
-	}
-
-	return (sum / float32(n))
+	return utils.GetAverageArrayInt(minArr), utils.GetAverageArrayInt(maxArr)
 }

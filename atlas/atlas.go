@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"example.com/utils"
 	"github.com/gocolly/colly"
 )
 
@@ -54,7 +55,7 @@ func GetAverageTemp(city string, days int) float32 {
 	tempInts = tempInts[:days]
 	log.Printf("The temps for %d days are: %v\n", days, tempInts)
 
-	return (averageArray(tempInts))
+	return (utils.GetAverageArrayInt(tempInts))
 }
 
 func GetTempMinMax(city string, days int) (int, int) {
@@ -76,7 +77,7 @@ func GetTempMinMax(city string, days int) (int, int) {
 	c.Visit(url + city + "-long-term-weather-forecast")
 
 	tempInts = tempInts[:days]
-	min, max := getMinMaxArray(tempInts)
+	min, max := utils.GetMinMaxArray(tempInts)
 
 	log.Printf("The temps for %d days are: %v", days, tempInts)
 	log.Printf("The min temp is: %d and the max temp is: %d ", min, max)
@@ -101,29 +102,4 @@ func initColly() *colly.Collector {
 	})
 
 	return c
-}
-
-func averageArray(array []int) float32 {
-	n := len(array)
-	sum := 0
-
-	for i := 0; i < n; i++ {
-		sum += (array[i])
-	}
-
-	return (float32(sum) / float32(n))
-}
-
-func getMinMaxArray(array []int) (int, int) {
-	min := 1000
-	max := 0
-	for i := 0; i < len(array); i++ {
-		if max < array[i] {
-			max = array[i]
-		} else if min > array[i] {
-			min = array[i]
-		}
-	}
-
-	return min, max
 }
