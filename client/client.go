@@ -10,6 +10,10 @@ func main() {
 	fmt.Println("Hello, boooooooom!")
 	var city = "hadera"
 
-	temp := calculate.CalcTemp(city)
-	fmt.Printf("\nThe average temperature NOW at %s is: %.2f\n", city, temp)
+	tempToday := calculate.CalcTempToday(city)
+	fmt.Printf("\nThe average temperature Today at %s is: %.2f\n", city, tempToday)
+
+	var days = 5
+	temp := calculate.CalcAverageTemp(city, days)
+	fmt.Printf("\nThe average temperature for %d days at %s is: %.2f\n", days, city, temp)
 }

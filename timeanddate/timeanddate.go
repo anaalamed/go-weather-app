@@ -20,7 +20,7 @@ func initColly() *colly.Collector {
 	return c
 }
 
-func GetTemp(city string) int {
+func GetTempToday(city string) int {
 	log.SetPrefix("timeanddate: ")
 	log.SetFlags(0)
 	log.Print("getTemp")
@@ -44,6 +44,47 @@ func GetTemp(city string) int {
 	}
 
 	return tempInt
+}
+
+func GetAverageTemp(city string, days int) float32 {
+	log.SetPrefix("timeanddate: ")
+	log.SetFlags(0)
+	log.Print("getAverageTemp")
+
+	c := initColly()
+
+	c.OnResponse(func(r *colly.Response) {
+		log.Print("Visited: ", r.Request.URL)
+	})
+
+	var tempInts []int
+	var tempStr string
+	c.OnHTML("#wt-ext tbody tr td:nth-child(5)", func(e *colly.HTMLElement) {
+		tempStr = strings.Fields(e.Text)[0]
+
+		tempInt, err := strconv.Atoi(tempStr)
+		if err != nil {
+			log.Print("Error during conversion")
+		}
+		tempInts = append(tempInts, tempInt)
+	})
+
+	c.Visit(url + city + "/ext")
+	tempInts = tempInts[:days]
+	log.Printf("The temps for %d days are: %v", days, tempInts)
+
+	return (averageArray(tempInts))
+}
+
+func averageArray(array []int) float32 {
+	n := len(array)
+	sum := 0
+
+	for i := 0; i < n; i++ {
+		sum += (array[i])
+	}
+
+	return (float32(sum) / float32(n))
 }
 
 // func Scrape() string {

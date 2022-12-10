@@ -8,7 +8,8 @@ import (
 	"github.com/gocolly/colly"
 )
 
-var url = "https://www.wunderground.com/hourly/il/"
+// today only!
+var url = "https://www.wunderground.com/forecast/il/"
 
 func initColly() *colly.Collector {
 
@@ -19,7 +20,7 @@ func initColly() *colly.Collector {
 	return c
 }
 
-func GetTemp(city string) int {
+func GetTempToday(city string) int {
 	log.SetPrefix("wunderground: ")
 	log.SetFlags(0)
 	log.Print("getTemp")
@@ -32,6 +33,7 @@ func GetTemp(city string) int {
 
 	var temp string
 	c.OnHTML(".station-nav .wu-value.wu-value-to", func(e *colly.HTMLElement) {
+		// c.OnHTML(".city-almanac .content .row:nth-child(4) .columns:nth-child(3) span span", func(e *colly.HTMLElement) {
 		temp = e.Text
 	})
 

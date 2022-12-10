@@ -8,6 +8,7 @@ import (
 	"github.com/gocolly/colly"
 )
 
+// var url = "https://www.weather-atlas.com/en/israel/"
 var url = "https://www.weather-atlas.com/en/israel/"
 
 func initColly() *colly.Collector {
@@ -18,7 +19,7 @@ func initColly() *colly.Collector {
 	return c
 }
 
-func GetTemp(city string) int {
+func GetTempToday(city string) int {
 	log.SetPrefix("weather-atlas: ")
 	log.SetFlags(0)
 	log.Print("getTemp")
@@ -30,11 +31,11 @@ func GetTemp(city string) int {
 	})
 
 	var temp string
-	c.OnHTML(".card-body .row .row .fs-2", func(e *colly.HTMLElement) {
+	c.OnHTML(".card:nth-child(3) .card-body .row .row .fs-2", func(e *colly.HTMLElement) {
 		temp = strings.Split(e.Text, "°")[0]
 	})
 
-	c.Visit(url + city)
+	c.Visit(url + city + "-long-term-weather-forecast")
 
 	tempInt, err := strconv.Atoi(temp)
 	if err != nil {
@@ -42,6 +43,47 @@ func GetTemp(city string) int {
 	}
 
 	return tempInt
+}
+
+func GetAverageTemp(city string, days int) float32 {
+	log.SetPrefix("weather-atlas: ")
+	log.SetFlags(0)
+	log.Print("getAverageTemp")
+
+	c := initColly()
+
+	c.OnResponse(func(r *colly.Response) {
+		log.Print("Visited: ", r.Request.URL)
+	})
+
+	var tempInts []int
+	var tempStr string
+	c.OnHTML(".row:nth-child(3) .card-body .fs-2.text-danger", func(e *colly.HTMLElement) {
+		tempStr = strings.Split(e.Text, "°")[0]
+
+		tempInt, err := strconv.Atoi(tempStr)
+		if err != nil {
+			log.Print("Error during conversion")
+		}
+		tempInts = append(tempInts, tempInt)
+	})
+
+	c.Visit(url + city + "-long-term-weather-forecast")
+	tempInts = tempInts[:days]
+	log.Printf("The temps for %d days are: %v\n", days, tempInts)
+
+	return (averageArray(tempInts))
+}
+
+func averageArray(array []int) float32 {
+	n := len(array)
+	sum := 0
+
+	for i := 0; i < n; i++ {
+		sum += (array[i])
+	}
+
+	return (float32(sum) / float32(n))
 }
 
 // func Scrape() string {
