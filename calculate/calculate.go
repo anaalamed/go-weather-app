@@ -35,7 +35,7 @@ func CalcAverageTemp(city string, days int) float32 {
 	return utils.GetAverageArrayFloat(tempArr)
 }
 
-func GetTempMinMax(city string, days int) (float32, float32) {
+func CalcTempMinMax(city string, days int) (float32, float32) {
 	fmt.Println("\n\n--------------------- Calculate Average Min and Max Temperature for days ----------------------")
 
 	tempTimeAmdDateMin, tempTimeAmdDateMax := timeanddate.GetTempMinMax(city, days)
@@ -46,4 +46,27 @@ func GetTempMinMax(city string, days int) (float32, float32) {
 	minArr := []int{tempAtlasMin, tempTimeAmdDateMin}
 	maxArr := []int{tempAtlasMax, tempTimeAmdDateMax}
 	return utils.GetAverageArrayInt(minArr), utils.GetAverageArrayInt(maxArr)
+}
+
+func CalcWeatherSummary(city string) *utils.Weather {
+	fmt.Println("\n\n--------------------- Calculate Weather Summary ----------------------")
+
+	weatherWunder := wunder.GetWeatherSummary(city)
+	weatherAtlas := atlas.GetWeatherSummary(city)
+	weatherTimeAndDate := timeanddate.GetWeatherSummary(city)
+
+	fmt.Printf("\nBy wunderground the weather summary is: %+v\n", weatherWunder)
+	fmt.Printf("By atlas-weather the weather summary is: %+v\n", weatherAtlas)
+	fmt.Printf("By timeanddate the weather summary is: %+v\n", weatherTimeAndDate)
+
+	tempAvg := utils.GetAverageArrayFloat([]float32{weatherWunder.Temp, weatherAtlas.Temp, weatherTimeAndDate.Temp})
+	humidityAvg := utils.GetAverageArrayFloat([]float32{weatherWunder.Humidity, weatherAtlas.Humidity, weatherTimeAndDate.Humidity})
+	precipitationAvg := utils.GetAverageArrayFloat([]float32{weatherWunder.Precipitation, weatherAtlas.Precipitation, weatherTimeAndDate.Precipitation})
+
+	weatherSummaryAvg := &utils.Weather{
+		Temp:          tempAvg,
+		Humidity:      humidityAvg,
+		Precipitation: precipitationAvg,
+	}
+	return weatherSummaryAvg
 }

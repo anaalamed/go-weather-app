@@ -35,3 +35,9 @@ func GetMinMaxArray(array []int) (int, int) {
 
 	return min, max
 }
+
+type Weather struct {
+	Temp          float32
+	Humidity      float32
+	Precipitation float32
+}

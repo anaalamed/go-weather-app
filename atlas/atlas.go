@@ -85,6 +85,42 @@ func GetTempMinMax(city string, days int) (int, int) {
 	return min, max
 }
 
+func GetWeatherSummary(city string) *utils.Weather {
+	c := initColly()
+	log.Print("GetWeatherSummary")
+
+	var temp, humidity, precipitation string
+
+	c.OnHTML(".card:nth-child(3) .card-body .row .row .fs-2", func(e *colly.HTMLElement) {
+		temp = strings.Split(e.Text, "°")[0]
+	})
+
+	c.OnHTML(".card:nth-child(3) .card-body .row .row div:nth-child(2) ul li:nth-child(2)", func(e *colly.HTMLElement) {
+		humidity = strings.Split(strings.Fields(e.Text)[1], "%")[0]
+	})
+
+	c.OnHTML(".card:nth-child(3) .card-body .row .row div:nth-child(2) ul li:nth-child(4)", func(e *colly.HTMLElement) {
+		precipitation = strings.Split(strings.Fields(e.Text)[1], "mm")[0]
+	})
+
+	c.Visit(url + city + "-long-term-weather-forecast")
+
+	tempInt, err := strconv.Atoi(temp)
+	humidityInt, err := strconv.Atoi(humidity)
+	precipitationInt, err := strconv.Atoi(precipitation)
+
+	if err != nil {
+		log.Println("Error during conversion")
+	}
+
+	weatherSummary := &utils.Weather{
+		Temp:          float32(tempInt),
+		Humidity:      float32(humidityInt),
+		Precipitation: float32(precipitationInt),
+	}
+	return weatherSummary
+}
+
 func initColly() *colly.Collector {
 	log.SetPrefix("weather-atlas: ")
 	log.SetFlags(0)
