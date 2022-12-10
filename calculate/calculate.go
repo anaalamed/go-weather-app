@@ -8,7 +8,7 @@ import (
 	"example.com/wunder"
 )
 
-func CalcTemp(city string) int {
+func CalcTemp(city string) float32 {
 	fmt.Println("------------------ CalcTemp --------------------")
 	// var city = "hadera"
 
@@ -19,5 +19,9 @@ func CalcTemp(city string) int {
 	fmt.Printf("By timeanddate temperature now at %s is: %d\n", city, tempTimeAmdDate)
 	fmt.Printf("By weather-atlas temperature now at %s is: %d\n", city, tempAtlas)
 
-	return (tempWunder + tempTimeAmdDate + tempAtlas) / 3
+	return average(tempAtlas, tempTimeAmdDate, tempWunder)
+}
+
+func average(num1 int, num2 int, num3 int) float32 {
+	return (float32(num1) + float32(num2) + float32(num3)) / 3
 }
