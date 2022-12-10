@@ -9,7 +9,7 @@ import (
 )
 
 func CalcTemp(city string) float32 {
-	fmt.Println("------------------ CalcTemp --------------------")
+	fmt.Println("--------------------- Calculate Temperature Now ----------------------")
 	// var city = "hadera"
 
 	tempWunder := wunder.GetTemp(city)

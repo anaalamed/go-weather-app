@@ -25,6 +25,10 @@ func GetTemp(city string) int {
 
 	c := initColly()
 
+	c.OnResponse(func(r *colly.Response) {
+		log.Print("Visited: ", r.Request.URL)
+	})
+
 	var temp string
 	c.OnHTML(".card-body .row .row .fs-2", func(e *colly.HTMLElement) {
 		temp = strings.Split(e.Text, "°")[0]

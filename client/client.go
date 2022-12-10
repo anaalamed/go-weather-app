@@ -11,5 +11,5 @@ func main() {
 	var city = "hadera"
 
 	temp := calculate.CalcTemp(city)
-	fmt.Printf("The average temperature now at %s is: %.2f\n", city, temp)
+	fmt.Printf("\nThe average temperature NOW at %s is: %.2f\n", city, temp)
 }

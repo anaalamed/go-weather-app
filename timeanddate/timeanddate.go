@@ -27,6 +27,10 @@ func GetTemp(city string) int {
 
 	c := initColly()
 
+	c.OnResponse(func(r *colly.Response) {
+		log.Print("Visited: ", r.Request.URL)
+	})
+
 	var temp string
 	c.OnHTML("#wt-ext tbody tr:first-child td:nth-child(5) ", func(e *colly.HTMLElement) {
 		temp = strings.Fields(e.Text)[0]
