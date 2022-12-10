@@ -18,7 +18,8 @@ func CalcTempToday(city string) float32 {
 	fmt.Printf("By timeanddate temperature now at %s is: %d\n", city, tempTimeAmdDate)
 	fmt.Printf("By weather-atlas temperature now at %s is: %d\n", city, tempAtlas)
 
-	return average(tempAtlas, tempTimeAmdDate, tempWunder)
+	tempArr := []int{tempAtlas, tempTimeAmdDate, tempWunder}
+	return getAverageArrayInt(tempArr)
 }
 
 func CalcAverageTemp(city string, days int) float32 {
@@ -29,13 +30,41 @@ func CalcAverageTemp(city string, days int) float32 {
 	fmt.Printf("\nBy timeanddate temperature for %d days at %s is: %.2f\n", days, city, tempTimeAmdDate)
 	fmt.Printf("By weather-atlas temperature for %d days at %s is: %.2f\n", days, city, tempAtlas)
 
-	return averageFloat(tempAtlas, tempTimeAmdDate)
+	tempArr := []float32{tempAtlas, tempTimeAmdDate}
+	return getAverageArrayFloat(tempArr)
 }
 
-func average(num1 int, num2 int, num3 int) float32 {
-	return (float32(num1) + float32(num2) + float32(num3)) / 3
+func GetTempMinMax(city string, days int) (float32, float32) {
+	fmt.Println("\n\n--------------------- Calculate Average Min and Max Temperature for days ----------------------")
+
+	tempTimeAmdDateMin, tempTimeAmdDateMax := timeanddate.GetTempMinMax(city, days)
+	tempAtlasMin, tempAtlasMax := atlas.GetTempMinMax(city, days)
+	fmt.Printf("\nBy timeanddate for %d days at %s min temp is: %d and max temp is: %d\n", days, city, tempTimeAmdDateMin, tempTimeAmdDateMax)
+	fmt.Printf("By weather-atlas for %d days at %s min temp is: %d and max temp is: %d\n", days, city, tempAtlasMin, tempAtlasMax)
+
+	minArr := []int{tempAtlasMin, tempTimeAmdDateMin}
+	maxArr := []int{tempAtlasMax, tempTimeAmdDateMax}
+	return getAverageArrayInt(minArr), getAverageArrayInt(maxArr)
 }
 
-func averageFloat(num1 float32, num2 float32) float32 {
-	return (num1 + num2) / 2
+func getAverageArrayInt(array []int) float32 {
+	n := len(array)
+	sum := 0
+
+	for i := 0; i < n; i++ {
+		sum += (array[i])
+	}
+
+	return (float32(sum) / float32(n))
+}
+
+func getAverageArrayFloat(array []float32) float32 {
+	n := len(array)
+	var sum float32 = 0
+
+	for i := 0; i < n; i++ {
+		sum += (array[i])
+	}
+
+	return (sum / float32(n))
 }

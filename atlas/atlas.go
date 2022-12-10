@@ -8,27 +8,11 @@ import (
 	"github.com/gocolly/colly"
 )
 
-// var url = "https://www.weather-atlas.com/en/israel/"
 var url = "https://www.weather-atlas.com/en/israel/"
 
-func initColly() *colly.Collector {
-	c := colly.NewCollector(
-		colly.AllowedDomains("weather-atlas.com", "www.weather-atlas.com"),
-	)
-
-	return c
-}
-
 func GetTempToday(city string) int {
-	log.SetPrefix("weather-atlas: ")
-	log.SetFlags(0)
-	log.Print("getTemp")
-
 	c := initColly()
-
-	c.OnResponse(func(r *colly.Response) {
-		log.Print("Visited: ", r.Request.URL)
-	})
+	log.Print("getTemp")
 
 	var temp string
 	c.OnHTML(".card:nth-child(3) .card-body .row .row .fs-2", func(e *colly.HTMLElement) {
@@ -46,11 +30,8 @@ func GetTempToday(city string) int {
 }
 
 func GetAverageTemp(city string, days int) float32 {
-	log.SetPrefix("weather-atlas: ")
-	log.SetFlags(0)
-	log.Print("getAverageTemp")
-
 	c := initColly()
+	log.Print("getAverageTemp")
 
 	c.OnResponse(func(r *colly.Response) {
 		log.Print("Visited: ", r.Request.URL)
@@ -69,10 +50,57 @@ func GetAverageTemp(city string, days int) float32 {
 	})
 
 	c.Visit(url + city + "-long-term-weather-forecast")
+
 	tempInts = tempInts[:days]
 	log.Printf("The temps for %d days are: %v\n", days, tempInts)
 
 	return (averageArray(tempInts))
+}
+
+func GetTempMinMax(city string, days int) (int, int) {
+	c := initColly()
+	log.Print("GetTempMinMax")
+
+	var tempInts []int
+	var tempStr string
+	c.OnHTML(".row:nth-child(3) .card-body .fs-2.text-danger", func(e *colly.HTMLElement) {
+		tempStr = strings.Split(e.Text, "°")[0]
+
+		tempInt, err := strconv.Atoi(tempStr)
+		if err != nil {
+			log.Print("Error during conversion")
+		}
+		tempInts = append(tempInts, tempInt)
+	})
+
+	c.Visit(url + city + "-long-term-weather-forecast")
+
+	tempInts = tempInts[:days]
+	min, max := getMinMaxArray(tempInts)
+
+	log.Printf("The temps for %d days are: %v", days, tempInts)
+	log.Printf("The min temp is: %d and the max temp is: %d ", min, max)
+
+	return min, max
+}
+
+func initColly() *colly.Collector {
+	log.SetPrefix("weather-atlas: ")
+	log.SetFlags(0)
+
+	c := colly.NewCollector(
+		colly.AllowedDomains("weather-atlas.com", "www.weather-atlas.com"),
+	)
+
+	c.OnResponse(func(r *colly.Response) {
+		log.Print("Visited: ", r.Request.URL)
+	})
+
+	c.OnError(func(r *colly.Response, err error) {
+		log.Print("Error!\n Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
+	})
+
+	return c
 }
 
 func averageArray(array []int) float32 {
@@ -86,40 +114,16 @@ func averageArray(array []int) float32 {
 	return (float32(sum) / float32(n))
 }
 
-// func Scrape() string {
-// 	fmt.Println("wunder")
+func getMinMaxArray(array []int) (int, int) {
+	min := 1000
+	max := 0
+	for i := 0; i < len(array); i++ {
+		if max < array[i] {
+			max = array[i]
+		} else if min > array[i] {
+			min = array[i]
+		}
+	}
 
-// 	c := colly.NewCollector(
-// 		colly.AllowedDomains("www.wunderground.com", "wunderground.com"),
-// 	)
-
-// 	// Called before a request
-// 	c.OnRequest(func(r *colly.Request) {
-// 		fmt.Println("Visiting", r.URL)
-// 		fmt.Println("\n------------")
-// 	})
-
-// 	c.OnError(func(r *colly.Response, err error) {
-// 		fmt.Println("Error!\n Request URL:", r.Request.URL, "failed with response:", r, "\nError:", err)
-// 	})
-
-// 	// Called after response received
-// 	c.OnResponse(func(r *colly.Response) {
-// 		fmt.Println("Visited", r.Request.URL)
-// 		fmt.Println("\n------------")
-// 	})
-
-// 	// Find now temperature
-// 	var temperature = "1"
-// 	c.OnHTML(".station-nav .wu-value.wu-value-to", func(e *colly.HTMLElement) {
-// 		temperature := e.Text
-// 		fmt.Println(temperature)
-// 	})
-
-// 	fmt.Println("after", temperature)
-
-// 	c.Visit("https://www.wunderground.com/hourly/il/hadera")
-
-// 	fmt.Println("end ", temperature)
-// 	return temperature
-// }
+	return min, max
+}
